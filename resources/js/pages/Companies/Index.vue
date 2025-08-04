@@ -10,6 +10,15 @@ import { ref, watch } from 'vue';
 import { debounce } from 'lodash';
 
 import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination"
+
+import {
     Table,
     TableBody,
     TableCaption,
@@ -26,8 +35,22 @@ interface Company {
     note: string;
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 interface Props {
-    companies: Company[];
+    companies: { // Ini adalah struktur data pagination dari Laravel
+        data: Company[];
+        links: PaginationLink[];
+        current_page: number;
+        last_page: number;
+        from: number;
+        to: number;
+        total: number;
+    };
     filters: {
         search?: string;
     };
@@ -43,7 +66,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 const page = usePage();
 
-// Safely access props.filters.search by using optional chaining
 const search = ref(props.filters?.search || '');
 
 const handleDelete = (id: number) => {
@@ -63,7 +85,7 @@ const performSearch = debounce(() => {
     });
 }, 300);
 
-watch(search, (newSearchTerm) => {
+watch(search, () => {
     performSearch();
 });
 
@@ -74,16 +96,18 @@ const clearSearch = () => {
 </script>
 
 <template>
+
     <Head title="Companies List" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <!-- Mengurangi padding pada kontainer utama secara keseluruhan -->
         <div class="p-4 md:p-6 lg:p-8">
             <!-- Judul Halaman -->
-            <h1 class="text-2xl font-semibold text-gray-800 mb-6">Company List</h1>
+            <h1 class="text-2xl font-semibold text-gray-800 mb-4">Company List</h1>
 
             <!-- Flash Message -->
-            <div v-if="page.props.flash?.message" class="mb-4">
+            <div v-if="page.props.flash?.message"
+                 class="mb-3">
                 <Alert class="bg-blue-50 text-blue-800 border-blue-200">
                     <Rocket class="h-4 w-4" />
                     <AlertTitle>Notification!</AlertTitle>
@@ -94,38 +118,36 @@ const clearSearch = () => {
             </div>
 
             <!-- Filter/Search Section dan Tombol Create -->
-            <!-- Menggabungkan search input dan create button dalam satu flex container -->
-            <div class="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
+            <div class="flex flex-col md:flex-row items-center justify-between mb-3 gap-4">
                 <!-- Search Input -->
                 <div class="relative w-full md:max-w-sm">
-                    <Input
-                        v-model="search"
-                        type="text"
-                        placeholder="Search companies..."
-                        class="pl-10 pr-8 w-full"
-                    />
+                    <Input v-model="search"
+                           type="text"
+                           placeholder="Search companies..."
+                           class="pl-10 pr-8 w-full" />
                     <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Button
-                        v-if="search"
-                        variant="ghost"
-                        size="icon"
-                        class="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-500 hover:bg-transparent"
-                        @click="clearSearch"
-                    >
+                    <Button v-if="search"
+                            variant="ghost"
+                            size="icon"
+                            class="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-500 hover:bg-transparent"
+                            @click="clearSearch">
                         <X class="h-4 w-4" />
                     </Button>
                 </div>
-                
+
                 <!-- Tombol Create Company -->
                 <Link :href="route('companies.create')">
-                    <Button class="w-full md:w-auto">Create Company</Button>
+                <Button class="w-full md:w-auto">Create Company</Button>
                 </Link>
             </div>
 
             <!-- Tabel Data Perusahaan -->
             <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
                 <Table>
-                    <TableCaption class="p-4 text-left text-gray-600">A list of your Companies.</TableCaption>
+                    <!-- <TableCaption class="p-4 text-left text-gray-600">
+                        Showing {{ props.companies.from }} to {{ props.companies.to }} of {{ props.companies.total }} Companies.
+                      
+                    </TableCaption> -->
                     <TableHeader class="bg-gray-50">
                         <TableRow>
                             <TableHead class="w-[120px] px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -143,7 +165,8 @@ const clearSearch = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody class="divide-y divide-gray-200">
-                        <TableRow v-for="company in props.companies" :key="company.id">
+                        <TableRow v-for="company in props.companies.data"
+                                  :key="company.id">
                             <TableCell class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
                                 {{ company.code }}
                             </TableCell>
@@ -155,27 +178,52 @@ const clearSearch = () => {
                             </TableCell>
                             <TableCell class="px-4 py-2 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                 <Link :href="route('companies.edit', { company: company.id })">
-                                    <Button class="bg-slate-600 hover:bg-slate-700 text-white" variant="default" size="sm">
-                                        Edit
-                                    </Button>
+                                <Button class="bg-slate-600 hover:bg-slate-700 text-white"
+                                        variant="default"
+                                        size="sm">
+                                    Edit
+                                </Button>
                                 </Link>
-                                <Button 
-                                    class="bg-red-600 hover:bg-red-700 text-white" 
-                                    variant="default" 
-                                    size="sm"
-                                    @click="handleDelete(company.id)"
-                                >
+                                <Button class="bg-red-600 hover:bg-red-700 text-white"
+                                        variant="default"
+                                        size="sm"
+                                        @click="handleDelete(company.id)">
                                     Delete
                                 </Button>
                             </TableCell>
                         </TableRow>
-                        <TableRow v-if="props.companies.length === 0">
-                            <TableCell colspan="4" class="text-center py-8 text-gray-500">
+                        <TableRow v-if="props.companies.data.length === 0">
+                            <TableCell colspan="4"
+                                       class="text-center py-8 text-gray-500">
                                 No companies found.
                             </TableCell>
                         </TableRow>
                     </TableBody>
+
+
                 </Table>
+                <!-- Pagination -->
+                <div class="mt-4 flex justify-between items-center px-4 py-3 border-t border-gray-200">
+                  <Pagination v-slot="{ page }" :items-per-page="10" :total="30" :default-page="2">
+    <PaginationContent v-slot="{ items }">
+      <PaginationPrevious />
+
+      <template v-for="(item, index) in items" :key="index">
+        <PaginationItem
+          v-if="item.type === 'page'"
+          :value="item.value"
+          :is-active="item.value === page"
+        >
+          {{ item.value }}
+        </PaginationItem>
+      </template>
+
+      <PaginationEllipsis :index="4" />
+
+      <PaginationNext />
+    </PaginationContent>
+  </Pagination>
+                </div>
             </div>
         </div>
     </AppLayout>

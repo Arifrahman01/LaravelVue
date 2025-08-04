@@ -19,7 +19,7 @@ class CompanyController extends Controller
                       ->orWhere('code', 'like', '%' . $search . '%');
         }
 
-       $companies = $companies->latest()->paginate(10);
+       $companies = $companies->latest()->paginate(5);
 
         return Inertia::render('Companies/Index', [
             'companies' => $companies,

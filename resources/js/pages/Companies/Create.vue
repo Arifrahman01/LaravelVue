@@ -2,52 +2,123 @@
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea'; // Import Textarea
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head , useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
+        title: 'Companies',
+        href: route('companies.index'),
+    },
+    {
         title: 'Create a Company',
-        href: '/companies/create',
+        href: route('companies.create'),
     },
 ];
+
 const form = useForm({
     code: '',
     name: '',
     note: '',
- });
+});
 
- const handleSubmit = () => {
-    form.post(route('companies.store'))
- }
+const handleSubmit = () => {
+    form.post(route('companies.store'));
+};
 
+// Fungsi untuk menangani "Create & create another"
+const handleSubmitAndAnother = () => {
+    form.post(route('companies.store'), {
+        onSuccess: () => form.reset(), // Reset form setelah sukses
+    });
+};
+
+// Fungsi untuk membatalkan dan kembali ke halaman index
+const handleCancel = () => {
+    window.history.back(); // Kembali ke halaman sebelumnya
+};
 </script>
 
 <template>
-
     <Head title="Create a Company" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="p-4">
-            <form @submit.prevent="handleSubmit" class="w-8/12 space-y-4 ">
-                <div class="space-y-2">
-                    <Label for="Company Code">Code</Label>
-                    <Input v-model="form.code" type="text" placeholder="Enter Company Code" />
-                    <div v-if="form.errors.code" class="text-sm text-red-600">{{ form.errors.code }}</div>
-                </div>
-                <div class="space-y-2">
-                    <Label for="Name">Name</Label>
-                    <Input v-model="form.name" type="text" placeholder="Enter Company Name" />
-                    <div v-if="form.errors.name" class="text-sm text-red-600">{{ form.errors.name }}</div>
-                </div>
-                <div class="space-y-2">
-                    <Label for="Note">Note</Label>
-                    <Input v-model="form.note" type="text" placeholder="Enter a note" />
-                    <div v-if="form.errors.note" class="text-sm text-red-600">{{ form.errors.note }}</div>
-                </div>
-                <Button type="submit" :disabled="form.processing" >Create</Button>
-            </form>
+        <!-- Kontainer utama dengan padding yang lebih besar untuk memberikan lebih banyak whitespace -->
+        <div class="p-6 md:p-10 lg:p-12 xl:p-16">
+            <!-- Kontainer untuk membungkus form, dengan lebar maksimum yang disesuaikan. mx-auto telah dihapus. -->
+            <div class="max-w-3xl">
+                <h1 class="text-2xl font-semibold mb-6 text-gray-800">Create New Company</h1>
+                
+                <form @submit.prevent="handleSubmit" class="space-y-6">
+                    <!-- Grid untuk Code dan Name -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Company Code -->
+                        <div>
+                            <Label for="code">Code</Label>
+                            <Input
+                                id="code"
+                                v-model="form.code"
+                                type="text"
+                                placeholder="Please enter a code"
+                                class="mt-1 w-full"
+                            />
+                            <div v-if="form.errors.code" class="text-sm text-red-600 mt-1">{{ form.errors.code }}</div>
+                        </div>
+
+                        <!-- Company Name -->
+                        <div>
+                            <Label for="name">Name</Label>
+                            <Input
+                                id="name"
+                                v-model="form.name"
+                                type="text"
+                                placeholder="Please enter a name"
+                                class="mt-1 w-full"
+                            />
+                            <div v-if="form.errors.name" class="text-sm text-red-600 mt-1">{{ form.errors.name }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Note -->
+                    <div>
+                        <Label for="note">Note</Label>
+                        <Textarea
+                            id="note"
+                            v-model="form.note"
+                            placeholder="Optional note"
+                            class="mt-1 w-full"
+                            rows="4"
+                        />
+                        <div v-if="form.errors.note" class="text-sm text-red-600 mt-1">{{ form.errors.note }}</div>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="flex items-center gap-3 pt-4">
+                        <Button type="submit" :disabled="form.processing">
+                            <span v-if="form.processing">Creating...</span>
+                            <span v-else>Create</span>
+                        </Button>
+                        <Button 
+                            type="button" 
+                            variant="secondary" 
+                            @click="handleSubmitAndAnother" 
+                            :disabled="form.processing"
+                        >
+                            Create & create another
+                        </Button>
+                        <Button 
+                            type="button" 
+                            variant="outline" 
+                            @click="handleCancel" 
+                            :disabled="form.processing"
+                        >
+                            Cancel
+                        </Button>
+                    </div>
+                </form>
+            </div>
         </div>
     </AppLayout>
 </template>

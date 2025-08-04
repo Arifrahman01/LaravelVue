@@ -8,29 +8,44 @@ use Inertia\Inertia;
 
 class CompanyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $companies = Companies::latest()->get();
-        return Inertia::render('Companies/Index',compact('companies'));
+        $companies = Companies::query();
+
+        // Menerapkan filter pencarian jika ada
+        if ($request->has('search') && $request->input('search') !== null) {
+            $search = $request->input('search');
+            $companies->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('code', 'like', '%' . $search . '%');
+        }
+
+        $companies = $companies->latest()->get();
+
+        return Inertia::render('Companies/Index', [
+            'companies' => $companies,
+            'filters' => $request->only(['search']),
+        ]);
     }
+
     public function create()
     {
         return Inertia::render('Companies/Create');
     }
+
     public function store(Request $request)
     {
         $data = $request->validate([
             'code' => 'required|string|max:10',
             'name' => 'required|string|max:255',
             'note' => 'nullable|string|max:1000',
-        ]); 
+        ]);
         Companies::create($data);
         return redirect()->route('companies.index')->with('message', 'Company created successfully.');
     }
 
     public function edit(Companies $company)
     {
-          return Inertia::render('Companies/Edit', compact('company'));
+        return Inertia::render('Companies/Edit', compact('company'));
     }
 
     public function update(Request $request, Companies $company)

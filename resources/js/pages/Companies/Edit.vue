@@ -8,25 +8,38 @@ import { Head , useForm } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Create a Company',
-        href: '/companies/create',
+        title: 'Edit a Company',
+        href: '',
     },
 ];
+
+interface company {
+    id: number;
+    code: string;
+    name: string;
+    note: string;
+}
+const props = defineProps<{company : company}>();
+
+
 const form = useForm({
-    code: '',
-    name: '',
-    note: '',
+    id: props.company.id, 
+    code: props.company.code,
+    name: props.company.name,
+    note: props.company.note,
  });
 
+ 
  const handleSubmit = () => {
-    form.post(route('companies.store'))
+    form.put(route('companies.update', { company : props.company}))
  }
+
 
 </script>
 
 <template>
 
-    <Head title="Create a Company" />
+    <Head title="Edit a Company" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-4">
@@ -46,7 +59,7 @@ const form = useForm({
                     <Input v-model="form.note" type="text" placeholder="Enter a note" />
                     <div v-if="form.errors.note" class="text-sm text-red-600">{{ form.errors.note }}</div>
                 </div>
-                <Button type="submit" :disabled="form.processing" >Create</Button>
+                <Button type="submit" :disabled="form.processing" >Update</Button>
             </form>
         </div>
     </AppLayout>

@@ -48,15 +48,16 @@ const handleCancel = () => {
     <Head title="Edit a Company" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <!-- Kontainer utama dengan padding yang lebih besar untuk memberikan lebih banyak whitespace -->
-        <div class="p-6 md:p-10 lg:p-12 xl:p-16">
+        <!-- Mengurangi padding pada kontainer utama secara keseluruhan -->
+        <div class="p-4 md:p-6 lg:p-8">
             <!-- Kontainer untuk membungkus form, dengan lebar maksimum yang disesuaikan. mx-auto telah dihapus. -->
             <div class="max-w-3xl">
-                <h1 class="text-2xl font-semibold mb-6 text-gray-800">Edit Company: {{ form.name }}</h1>
+                <!-- Mengurangi margin-bottom pada judul untuk mendekatkan ke form -->
+                <h1 class="text-2xl font-semibold mb-4 text-gray-800">Edit Company: {{ form.name }}</h1>
                 
-                <form @submit.prevent="handleSubmit" class="space-y-6">
+                <form @submit.prevent="handleSubmit" class="space-y-4"> <!-- Mengurangi space-y -->
                     <!-- Grid untuk Code dan Name -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> <!-- Mengurangi gap -->
                         <!-- Company Code -->
                         <div>
                             <Label for="code">Code</Label>

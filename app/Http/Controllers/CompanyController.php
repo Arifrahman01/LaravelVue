@@ -19,7 +19,7 @@ class CompanyController extends Controller
                       ->orWhere('code', 'like', '%' . $search . '%');
         }
 
-        $companies = $companies->latest()->get();
+       $companies = $companies->latest()->paginate(10);
 
         return Inertia::render('Companies/Index', [
             'companies' => $companies,
@@ -35,7 +35,7 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'code' => 'required|string|max:10',
+            'code' => 'required|string|max:10|unique:companies,code',
             'name' => 'required|string|max:255',
             'note' => 'nullable|string|max:1000',
         ]);

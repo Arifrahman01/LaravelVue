@@ -43,7 +43,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 const page = usePage();
 
-// FIX: Safely access props.filters.search by using optional chaining
+// Safely access props.filters.search by using optional chaining
 const search = ref(props.filters?.search || '');
 
 const handleDelete = (id: number) => {
@@ -77,17 +77,13 @@ const clearSearch = () => {
     <Head title="Companies List" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="p-6 md:p-10 lg:p-12 xl:p-16">
-            <!-- Header Section: Judul dan Tombol Create -->
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-2xl font-semibold text-gray-800">Company List</h1>
-                <Link :href="route('companies.create')">
-                    <Button>Create Company</Button>
-                </Link>
-            </div>
+        <!-- Mengurangi padding pada kontainer utama secara keseluruhan -->
+        <div class="p-4 md:p-6 lg:p-8">
+            <!-- Judul Halaman -->
+            <h1 class="text-2xl font-semibold text-gray-800 mb-6">Company List</h1>
 
             <!-- Flash Message -->
-            <div v-if="page.props.flash?.message" class="mb-6">
+            <div v-if="page.props.flash?.message" class="mb-4">
                 <Alert class="bg-blue-50 text-blue-800 border-blue-200">
                     <Rocket class="h-4 w-4" />
                     <AlertTitle>Notification!</AlertTitle>
@@ -97,8 +93,9 @@ const clearSearch = () => {
                 </Alert>
             </div>
 
-            <!-- Filter/Search Section -->
-            <div class="flex items-center justify-between mb-4">
+            <!-- Filter/Search Section dan Tombol Create -->
+            <!-- Menggabungkan search input dan create button dalam satu flex container -->
+            <div class="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
                 <!-- Search Input -->
                 <div class="relative w-full md:max-w-sm">
                     <Input
@@ -118,7 +115,11 @@ const clearSearch = () => {
                         <X class="h-4 w-4" />
                     </Button>
                 </div>
-                <!-- Di sini bisa ditambahkan filter lain seperti dropdown jika diperlukan -->
+                
+                <!-- Tombol Create Company -->
+                <Link :href="route('companies.create')">
+                    <Button class="w-full md:w-auto">Create Company</Button>
+                </Link>
             </div>
 
             <!-- Tabel Data Perusahaan -->

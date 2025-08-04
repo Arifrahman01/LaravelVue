@@ -204,25 +204,59 @@ const clearSearch = () => {
                 </Table>
                 <!-- Pagination -->
                 <div class="mt-4 flex justify-between items-center px-4 py-3 border-t border-gray-200">
-                  <Pagination v-slot="{ page }" :items-per-page="10" :total="30" :default-page="2">
-    <PaginationContent v-slot="{ items }">
-      <PaginationPrevious />
-
-      <template v-for="(item, index) in items" :key="index">
-        <PaginationItem
-          v-if="item.type === 'page'"
-          :value="item.value"
-          :is-active="item.value === page"
-        >
-          {{ item.value }}
-        </PaginationItem>
-      </template>
-
-      <PaginationEllipsis :index="4" />
-
-      <PaginationNext />
-    </PaginationContent>
-  </Pagination>
+                    <div class="text-sm text-gray-700">
+                        Showing {{ props.companies.from }} to {{ props.companies.to }} of {{ props.companies.total }} results
+                    </div>
+                    <nav class="flex items-center space-x-2">
+                        <!-- Previous Button -->
+                        <Link v-if="props.companies.current_page > 1"
+                              :href="route('companies.index', { 
+                                page: props.companies.current_page - 1,
+                                search: search || undefined 
+                            })"
+                              class="px-3 py-1 text-sm border rounded-md hover:bg-gray-100">
+                        Previous
+                        </Link>
+                        <span v-else
+                              class="px-3 py-1 text-sm border rounded-md text-gray-400 cursor-not-allowed">
+                            Previous
+                        </span>
+                        <!-- Page Numbers -->
+                        <template v-for="link in props.companies.links"
+                                  :key="link.label">
+                            <Link v-if="link.url && !link.label.includes('Previous') && !link.label.includes('Next')"
+                                  :href="route('companies.index', { 
+                                    page: parseInt(link.label),
+                                    search: search || undefined 
+                                })"
+                                  :class="[
+                                    'px-3 py-1 text-sm border rounded-md',
+                                    link.active 
+                                        ? 'bg-primary text-white border-primary' 
+                                        : 'hover:bg-gray-100'
+                                ]">
+                            <span v-html="link.label"></span>
+                            </Link>
+                            <span v-else-if="!link.url && link.label === '...'"
+                                  class="px-3 py-1 text-sm">
+                                ...
+                            </span>
+                        </template>
+                        
+                        <!-- Next Button -->
+                        <Link v-if="props.companies.current_page < props.companies.last_page"
+                              :href="route('companies.index', { 
+                                page: props.companies.current_page + 1,
+                                search: search || undefined 
+                            })"
+                              class="px-3 py-1 text-sm border rounded-md hover:bg-gray-100">
+                        Next
+                        </Link>
+                        <span v-else
+                              class="px-3 py-1 text-sm border rounded-md text-gray-400 cursor-not-allowed">
+                            Next
+                        </span>
+                    </nav>
                 </div>
             </div>
         </div>

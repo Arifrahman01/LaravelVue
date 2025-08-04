@@ -43,4 +43,10 @@ class CompanyController extends Controller
         $company->update($data);
         return redirect()->route('companies.index')->with('message', 'Company updated successfully.');
     }
+
+    public function destroy(Companies $company)
+    {
+        $company->delete();
+        return redirect()->route('companies.index')->with('message', 'Company deleted successfully.');
+    }
 }

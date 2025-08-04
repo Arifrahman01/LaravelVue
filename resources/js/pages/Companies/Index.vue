@@ -3,7 +3,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Rocket } from 'lucide-vue-next';
 import {
     Table,
@@ -35,6 +35,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 const page = usePage();
+
+const handleDelete = (id: number) => {
+    if (confirm('Are you sure you want to delete this company?')) {
+        router.delete(route('companies.destroy', { id }));
+    }
+}
+
 
 
 </script>
@@ -85,7 +92,7 @@ const page = usePage();
                             <TableCell>
                                 {{ companies.note }}
                             </TableCell>
-                            <TableCell class="text-right">
+                            <TableCell class="text-right space-x-2">
                                 <Link :href="route('companies.edit', { id: companies.id })">
                                 <Button class="bg-slate-600"
                                         variant="outline"
@@ -93,6 +100,12 @@ const page = usePage();
                                     Edit
                                 </Button>
                                 </Link>
+                                <Button class="bg-red-600"
+                                        variant="outline"
+                                        size="sm"
+                                        @click="handleDelete(companies.id)">
+                                    Delete
+                                </Button>
                             </TableCell>
                         </TableRow>
                     </TableBody>

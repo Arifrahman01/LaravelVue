@@ -5,7 +5,7 @@ import Input from '@/components/ui/input/Input.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Rocket, Search, X } from 'lucide-vue-next';
+import { Rocket, Search, X, Edit as RocketEditIcon, Trash2 as Trash2Icon } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 import { debounce } from 'lodash';
 
@@ -106,7 +106,7 @@ const clearSearch = () => {
                     <Rocket class="h-4 w-4" />
                     <AlertTitle>Notification!</AlertTitle>
                     <AlertDescription>
-                        {{ $page.props.flash.message }}
+                        {{ page.props.flash?.message }}
                     </AlertDescription>
                 </Alert>
             </div>
@@ -170,19 +170,27 @@ const clearSearch = () => {
                             <TableCell class="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
                                 {{ company.note }}
                             </TableCell>
-                            <TableCell class="px-4 py-2 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                <Link :href="route('companies.edit', { company: company.id })">
-                                <Button class="bg-slate-600 hover:bg-slate-700 text-white"
-                                        variant="default"
-                                        size="sm">
-                                    Edit
+                            <TableCell class="px-4 py-2 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    class="text-slate-600 hover:text-slate-800"
+                                    as="a"
+                                    :href="route('companies.edit', { company: company.id })"
+                                    title="Edit Company"
+                                    aria-label="Edit Company"
+                                >
+                                    <RocketEditIcon class="h-4 w-4" />
                                 </Button>
-                                </Link>
-                                <Button class="bg-red-600 hover:bg-red-700 text-white"
-                                        variant="default"
-                                        size="sm"
-                                        @click="handleDelete(company.id)">
-                                    Delete
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    class="text-red-600 hover:text-red-800 ml-2"
+                                    @click="handleDelete(company.id)"
+                                    title="Delete Company"
+                                    aria-label="Delete Company"
+                                >
+                                    <Trash2Icon class="h-4 w-4" />
                                 </Button>
                             </TableCell>
                         </TableRow>

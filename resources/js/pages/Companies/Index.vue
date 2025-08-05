@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import Button from '@/components/ui/button/Button.vue';
-import Input from '@/components/ui/input/Input.vue';
+import SearchInput from '@/components/ui/ifman/SearchInput.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
@@ -15,7 +15,6 @@ import SimplePagination from '@/components/ui/ifman/SimplePagination.vue'
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -114,20 +113,10 @@ const clearSearch = () => {
             <!-- Filter/Search Section dan Tombol Create -->
             <div class="flex flex-col md:flex-row items-center justify-between mb-3 gap-4">
                 <!-- Search Input -->
-                <div class="relative w-full md:max-w-sm">
-                    <Input v-model="search"
-                           type="text"
-                           placeholder="Search companies..."
-                           class="pl-10 pr-8 w-full" />
-                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Button v-if="search"
-                            variant="ghost"
-                            size="icon"
-                            class="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-500 hover:bg-transparent"
-                            @click="clearSearch">
-                        <X class="h-4 w-4" />
-                    </Button>
-                </div>
+                <SearchInput
+                    v-model="search"
+                    placeholder="Search companies..."
+                />
 
                 <!-- Tombol Create Company -->
                 <Link :href="route('companies.create')">
@@ -138,10 +127,6 @@ const clearSearch = () => {
             <!-- Tabel Data Perusahaan -->
             <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
                 <Table>
-                    <!-- <TableCaption class="p-4 text-left text-gray-600">
-                        Showing {{ props.companies.from }} to {{ props.companies.to }} of {{ props.companies.total }} Companies.
-                      
-                    </TableCaption> -->
                     <TableHeader class="bg-gray-50">
                         <TableRow>
                             <TableHead class="w-[120px] px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -197,7 +182,7 @@ const clearSearch = () => {
                         <TableRow v-if="props.companies.data.length === 0">
                             <TableCell colspan="4"
                                        class="text-center py-8 text-gray-500">
-                                No companies found.
+                                No Data found.
                             </TableCell>
                         </TableRow>
                     </TableBody>

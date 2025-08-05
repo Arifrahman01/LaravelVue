@@ -5,7 +5,7 @@ import SearchInput from '@/components/ui/ifman/SearchInput.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Rocket, Search, X, Edit as RocketEditIcon, Trash2 as Trash2Icon } from 'lucide-vue-next';
+import { Rocket, Edit as RocketEditIcon, Trash2 as Trash2Icon } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 import { debounce } from 'lodash';
 
